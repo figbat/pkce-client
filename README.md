@@ -1,3 +1,31 @@
+# Demo Background
+
+This is a Node.js native app that runs from the command line. It's as lean as possible to focus on the mechanism of the flow in action. As such, it only has 4 dependencies: `commander` for parsing command line switches, `opn` for a platform-independent way to launch a browser from the command line, `request` to make HTTP requests and `restify` to provide a RESTful API endpoint to listen on.
+
+The Auth Code with PKCE Flow will replace the Implicit Flow over time. This will strengthen SPA apps by reducing the surface area of attack.
+
+[AppAuth-JS](https://github.com/openid/AppAuth-JS) is a high quality JavaScript library that supports the Auth Code with PKCE Flow and hides away a lot of the details of what’s happening during the flow. It can be utilized in a SPA.
+
+## Why not Implicit Flow?
+
+Here's an overview of the Implicit flow :
+
+![implicit](implicit.png)
+
+1. You access the app in your browser and click its login button
+2. The app responds with a redirect to the browser
+3. The browser follows the redirect to Identity Provider (Okta)
+4. Identity Provider (Okta) returns a hosted login form
+5. You submit your username and password directly to Identity Provider (Okta)
+6. Identity Provider (Okta) authenticates you and sends a redirect with a token in the URL
+7. The browser follows the redirect to your Node app, which parses the token out of the URL
+
+This has been a solid approach for SPA apps. It’s a flow that gets your app a token in an untrusted environment without revealing any secrets. But it’s always had a security issue. Notice steps 6 and 7 above involve a redirect back to the Node app in the browser. Redirects are HTTP GETs. As such, the only opportunity to get a token back to the app is include it in the **URL**. _This is problematic from a security standpoint since the token is now sitting in the browser history._
+
+**It’s especially problematic if the token is long lived.** A security professional would say there's an _increase in the attack surface area._ An example of why this is a problem is that many people sync their browser history across multiple devices further expanding the attack surface.
+
+It is also possible to see the token in the browser history
+
 ## Command Line
 
 This tool demonstrates the Authorization Code Flow with PKCE. It is a copy of a sample program from OKTA developer portal and requires an account registration and configuration of the IDP (Identity Provider) developer domain associated with the account.
@@ -7,20 +35,20 @@ It follows these steps:
 1. Creates a random string called the `code verifier`
 2. Hashes the `code verifier` creating a value called the `code challenge`
 3. Builds an authorization URL which includes:
-    a. OIDC Client ID
-    b. a list of request scopes
-    c. a redirect uri
-    d. a randomly generated state value
-    e. the `code challenge`
-    f. a response type set to `code` to indicate that we're using the authorization code flow
+    a.) OIDC Client ID
+    b.) List of request scopes
+    c.) Redirect uri
+    d.) Randomly generated state value
+    e.) The `code challenge`
+    f.) Response type set to `code` to indicate that we're using the authorization code flow
 4. Launches a browser with the authorization URL, at which point you will authenticate
 5. Receives the redirect from the authorization url, which includes a `code`
 6. Calls the `token` endpoint with:
-    a. grant type set to `authorization code`
-    b. a redirect uri that must match the one used in the authorization step
-    c. OIDC Client ID
-    d. the `code`
-    e. the `code verifier` from earlier
+    a.) Grant type set to `authorization code`
+    b.) Redirect uri that must match the one used in the authorization step
+    c.) OIDC Client ID
+    d.) The `code`
+    e.) The `code verifier` from earlier
 7. Displays the tokens returned from the `token` endpoint
 8. Uses the returned access token to call the `userinfo` endpoint
 
