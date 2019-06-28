@@ -1,0 +1,167 @@
+#!/usr/bin/env node
+
+var crypto = require('crypto');     // CommonJS Module for Crptography
+var restify = require('restify');   // framework for building rest-apis (server & client)
+var request = require('request');   // http request client
+var program = require('commander'); // command-line interface
+var opn = require('opn');           // Open a browser from NodeJS
+
+// Setup
+
+program
+  .option('-c, --client_id <okta client id>', 'OIDC Client ID', '')
+  .option('-o, --okta_org <okta org url>', 'ex: https://dev-532307.okta.com', '')
+  .option('-s, --scopes <space separated list of scopes>', 'Space separated list of scopes', 'openid profile email offline_access')
+  .option('-r, --redirect_uri <redirect uri>', 'redirect uri', 'http://localhost:8080/redirect')
+  .parse(process.argv);
+  
+if (
+  !program.client_id || !program.okta_org || 
+  !program.scopes || !program.redirect_uri
+) {
+  program.help();
+  process.exit(1);
+}  
+  
+const server = restify.createServer({
+  name: 'NativeNodeApp',
+  version: '1.0.1'
+});
+
+server.use(restify.plugins.acceptParser(server.acceptable));
+server.use(restify.plugins.queryParser());
+server.use(restify.plugins.bodyParser());
+server.listen(8080);
+
+// listen on https://localhost:8080/redirect for redirect_uri callback from identity providor
+server.get('/redirect', idpRedirectHandler);
+
+// execute auth code flow with pkce
+var codeVerifier = uuid();
+console.log('Created Code Verifier (v): ' + codeVerifier + '\n');
+
+// Using the hash.update() and hash.digest() methods to produce the computed hash
+// as a base64 string.
+var codeChallenge = base64urlencode(
+  crypto.createHash('sha256').update(codeVerifier).digest('base64')
+);
+console.log('Created Code Challenge ($): ' + codeChallenge + '\n');
+var authorizeUrl = buildAuthorizeUrl(codeChallenge);
+console.log('About to call Authorize URL: ' + authorizeUrl + '\n');
+
+console.log('press any key to continue...');
+keypress().then(() => {
+  // Step 1: call authorize endpoint where user will authenticate to Okta
+  opn(authorizeUrl);
+});
+
+// Step 2: Okta  (Identity Providor) redirects back to this app with an auth code
+async function idpRedirectHandler(req, res, next) {
+  var body = `<html><body>
+    <h2>OAuth2 authorize complete. </h2>
+    </b> <h3> req.query.code=${req.query.code}</h3>
+    </b> <h3> req.query.state=${req.query.state}</h3>
+    </b> <h3> Please close browser tab!</h3>
+    </body></html>`;
+  res.writeHead(200, {
+      'Content-Length': Buffer.byteLength(body),
+      'Content-Type': 'text/html'
+  });
+  res.write(body);
+  res.end();
+
+  console.log('\nGot code (α): ' + req.query.code );
+  console.log('\nGot state (s): ' + req.query.state + '\n');
+
+  console.log('press any key to continue...');
+  await keypress();
+
+  var form = {
+    grant_type: 'authorization_code',
+    redirect_uri: program.redirect_uri,
+    client_id: program.client_id,
+    code: req.query.code,
+    code_verifier: codeVerifier
+  };
+  
+  console.log('\nCalling /token endpoint with:');
+  console.log('client_id: ' + form.client_id);
+  console.log('code_verifier (v): ' + form.code_verifier);
+  console.log('code (α): ' + form.code + '\n');
+  
+  console.log(
+    'Form post to be sent to the /token endpoint:'
+  );
+  console.log(form);
+  console.log();
+
+  console.log('press any key to continue...');
+  await keypress();
+  
+  // Step 3: call token endpoint where Identity Provider (Okta) will exchange code for tokens
+  var opt = {
+    url: program.okta_org + '/oauth2/default/v1/token', 
+    form: form
+  }
+  request.post(opt, (err, httpResponse, body) => {
+    var tokenResponse = JSON.parse(body);
+    tokenResponseHandler(tokenResponse);
+    return next();
+  })
+  .on('error', (err) => {
+    console.log(err);
+  });
+}
+
+// Step 4: use the access_token to hit the /userinfo endpoint
+async function tokenResponseHandler(tokenResponse) {
+  console.log('\nToken response:');
+  console.log(tokenResponse);
+  console.log();
+
+  console.log('press any key to continue...');
+  await keypress();  
+
+  console.log('\nCalling /userinfo endpoint with access token\n');
+  
+  request.get(
+    program.okta_org + '/oauth2/default/v1/userinfo', 
+    { auth: { bearer: tokenResponse.access_token } }, 
+     (err, httpResponse, body) => {
+      console.log(JSON.parse(body));
+      process.exit(0);
+    }
+  );
+}
+
+function uuid() {
+  s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+
+  return s4() + '_' + s4() + '_' + s4() + '_' + s4() + '_' + 
+    s4() + '_' + s4() + '_' + s4() + '_' + s4() + '_' + 
+    s4() + '_' + s4() + '_' + s4()
+}
+
+function base64urlencode(str){
+    return str.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
+}
+
+function buildAuthorizeUrl(codeChallenge) {
+	var authorizeUrl = program.okta_org + '/oauth2/default/v1/authorize?' +
+    'client_id=' + program.client_id + '&' +
+    'response_type=code&' +
+    'scope=' + program.scopes + '&' +
+    'redirect_uri=' + program.redirect_uri + '&' +
+    'state=' + uuid() + '&' +
+    'code_challenge_method=S256&' + 
+    'code_challenge=' + codeChallenge;
+  return authorizeUrl;
+}
+
+async function keypress() {
+  process.stdin.setRawMode(true)
+  return new Promise(resolve => process.stdin.once('data', () => {
+    process.stdin.setRawMode(false)
+    resolve()
+  }))
+}

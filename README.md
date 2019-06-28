@@ -1,0 +1,131 @@
+## Command Line
+
+This tool demonstrates the Authorization Code Flow with PKCE. It is a copy of a sample program from OKTA developer portal and requires an account registration and configuration of the IDP (Identity Provider) developer domain associated with the account.
+
+It follows these steps:
+
+1. Creates a random string called the `code verifier`
+2. Hashes the `code verifier` creating a value called the `code challenge`
+3. Builds an authorization URL which includes:
+    a. OIDC Client ID
+    b. a list of request scopes
+    c. a redirect uri
+    d. a randomly generated state value
+    e. the `code challenge`
+    f. a response type set to `code` to indicate that we're using the authorization code flow
+4. Launches a browser with the authorization URL, at which point you will authenticate
+5. Receives the redirect from the authorization url, which includes a `code`
+6. Calls the `token` endpoint with:
+    a. grant type set to `authorization code`
+    b. a redirect uri that must match the one used in the authorization step
+    c. OIDC Client ID
+    d. the `code`
+    e. the `code verifier` from earlier
+7. Displays the tokens returned from the `token` endpoint
+8. Uses the returned access token to call the `userinfo` endpoint
+
+## Prerequisites
+Install NodeJS
+
+## Usage
+
+```
+Usage: pkce-client [options]
+
+Options:
+  -c, --client_id <okta client id>               OIDC Client ID (default: "")
+  -o, --okta_org <okta org url>                  ex: https://dev-532307.okta.com (default: "")
+  -s, --scopes <space separated list of scopes>  Space separated list of scopes (default: "")
+  -r, --redirect_uri <redirect uri>              redirect uri (default: "")
+  -h, --help                                     output usage information
+```
+
+## Install
+
+```
+npm install
+
+```
+## Run
+ The npm pkce script has the following command: \
+ node pkce-client \
+  --client_id 0oar16ap61JZJIbYp356 \
+  --okta_org https://dev-532307.okta.com \
+  --scopes "openid profile email offline_access" \
+  --redirect_uri http://localhost:8080/redirect 
+```
+npm run pkce 
+
+```
+
+You'll get output like this:
+
+```
+Created Code Verifier (v): 191c_eaa4_01f6_dc74_1374_7859_04d5_fa7b_1729_9611_a897
+
+Created Code Challenge ($): 6hE8f6iL_YJafzSxSiO_zrenB_D_cuy9sDkqutBstHw
+
+About to call Authorize URL: https://dev-532307.okta.com/oauth2/default/v1/authorize?client_id=0oar16ap61JZJIbYp356&response_type=code&scope=openid profile email offline_access&redirect_uri=http://localhost:8080/redirect&state=e5ce_463b_51fa_a453_1105_7f2e_8ea0_019a_2d15_4cab_3ba2&code_challenge_method=S256&code_challenge=6hE8f6iL_YJafzSxSiO_zrenB_D_cuy9sDkqutBstHw
+
+press any key to continue...
+
+Got code (α): pPbru1AcBH1_WoePVW5f
+
+Got state (s): e5ce_463b_51fa_a453_1105_7f2e_8ea0_019a_2d15_4cab_3ba2
+
+press any key to continue...
+
+Calling /token endpoint with:
+client_id: 0oar16ap61JZJIbYp356
+code_verifier (v): 191c_eaa4_01f6_dc74_1374_7859_04d5_fa7b_1729_9611_a897
+code (α): pPbru1AcBH1_WoePVW5f
+
+Form post to be sent to the /token endpoint:
+{ grant_type: 'authorization_code',
+  redirect_uri: 'http://localhost:8080/redirect',
+  client_id: '0oar16ap61JZJIbYp356',
+  code: 'pPbru1AcBH1_WoePVW5f',
+  code_verifier: '191c_eaa4_01f6_dc74_1374_7859_04d5_fa7b_1729_9611_a897' }
+
+press any key to continue...
+
+Token response:
+{ access_token:
+   'eyJraWQiOiJNYWhtRXBOeWlWckIxQUdUV0p3YTJvb0VrcHNUdTdYNzNLbXF6V2Yxb3pBIiwiYWxnIjoiUlMyNTYifQ.eyJ2ZXIiOjEsImp0aSI6IkFULllqRWdJb19rZ2h4OVB4NlNGcFZYZTJrM2hKT082Wk43WlVPWWhEanhfXzAuTHppbFFnTVVkY0ZVNVI1d3ZPM2YxakxwM01HT1YyVHZORFl6UEJNdXpxST0iLCJpc3MiOiJodHRwczovL2Rldi01MzIzMDcub2t0YS5jb20vb2F1dGgyL2RlZmF1bHQiLCJhdWQiOiJhcGk6Ly9kZWZhdWx0IiwiaWF0IjoxNTYxNjU1NTU4LCJleHAiOjE1NjE2NTkxNTgsImNpZCI6IjBvYXIxNmFwNjFKWkpJYllwMzU2IiwidWlkIjoiMDB1cjB0MXVvdUlvalkzUzgzNTYiLCJzY3AiOlsiZW1haWwiLCJvZmZsaW5lX2FjY2VzcyIsInByb2ZpbGUiLCJvcGVuaWQiXSwic3ViIjoiYnJpYW5yYWZhbG93c2tpQGdtYWlsLmNvbSJ9.oHDxU_uZNaiWfwPfmYaxCBmg-qfCLhurySG8mA2mHSAmGsApgQ_ajNqGmb-QhSdu82CjycUuf2TkvZX0yZHgptpXjE8krzB_1Z4Uw6b-cjn7lMIJxY-HAsHvGIz_tyC5fOXsJkYf9pqNffcGgfngQ76-KhuQesbxRFMavOlopLrcMe6OzowgycGQfTyAiikLA5Yg2ueC52udMqeUG747oS2z4BTOgWcPey5ZK7ezTT1PAr3cA_GnCOoqJro2meN0yUefZ-QaAGSPM7dKzUpuBWG9CRCSWQ6iN8R5jSCw0q_TmfZWgx2phXdYWbGDN10CyTpl84HJb3gYy-ai6i6Z8g',
+  token_type: 'Bearer',
+  expires_in: 3600,
+  scope: 'email offline_access profile openid',
+  refresh_token: 'Nie0ymUUfl628yMjJ86c1ULCXsoKuTxiG9v-DEKbN-c',
+  id_token:
+   'eyJraWQiOiJNYWhtRXBOeWlWckIxQUdUV0p3YTJvb0VrcHNUdTdYNzNLbXF6V2Yxb3pBIiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiIwMHVyMHQxdW91SW9qWTNTODM1NiIsIm5hbWUiOiJCcmlhbiBSYWZhbG93c2tpIiwiZW1haWwiOiJicmlhbnJhZmFsb3dza2lAZ21haWwuY29tIiwidmVyIjoxLCJpc3MiOiJodHRwczovL2Rldi01MzIzMDcub2t0YS5jb20vb2F1dGgyL2RlZmF1bHQiLCJhdWQiOiIwb2FyMTZhcDYxSlpKSWJZcDM1NiIsImlhdCI6MTU2MTY1NTU1OCwiZXhwIjoxNTYxNjU5MTU4LCJqdGkiOiJJRC5ja1V6enoyV1BWY0xmTUV1b1JCa2dPZkl4YlExN24yd2x1dHVxc0cyZ0FZIiwiYW1yIjpbInB3ZCJdLCJpZHAiOiIwMG9yMHQxcmsyOGZYUUp2RTM1NiIsInByZWZlcnJlZF91c2VybmFtZSI6ImJyaWFucmFmYWxvd3NraUBnbWFpbC5jb20iLCJhdXRoX3RpbWUiOjE1NjE2NTU1NDMsImF0X2hhc2giOiJlZklOSGFBNGxLb2l0T2wxaG1IX1hRIn0.JNHVYUa4nhSH5y9lPXCgwe4MEh-uOJskN25nAuC34nLjeQ7o__x_98o5b6D68V2hwQkTbENGixfht_spSAG6ktDssReaFyW7_JEApx1AG4B0qtnT7ExC2-pOCt5FFFPRQCVYjstcBoaQSKrX4594_YifJg4zDwwoOxPI2fi8uJ1wNHiUfTjE9VXH3DShpImsNrWbV-nkqZdAsZrhcNgqPfPK2enBeGbwHNNl9hHEQoNV8gqCq_3comZql-vJrR1GA21-oT0Uf0JMnaUlGXgURUtHw1bJDyn_QzSrtWcyNUnt9vLlHtanyixgvOVcm0N5yp7b0BfF2v09UpWdm5VP5Q' }
+
+press any key to continue...
+
+Calling /userinfo endpoint with access token
+
+{ sub: '00ur0t1uouIojY3S8356',
+  name: 'Brian Rafalowski',
+  locale: 'en-US',
+  email: 'brianrafalowski@gmail.com',
+  preferred_username: 'brianrafalowski@gmail.com',
+  given_name: 'Brian',
+  family_name: 'Rafalowski',
+  zoneinfo: 'America/Los_Angeles',
+  updated_at: 1561403556,
+  email_verified: true }
+```
+
+## Diagrams
+
+Here's an overview of the Authorization Code with PKCE flow:
+
+![pkce](pkce.png)
+
+Note: This image was generated using [mermaid](https://mermaidjs.github.io/). The source is [here](pkce.mmd)
+
+You can edit and regenrate the image using this command:
+
+```
+mmdc -i pkce.mmd -o pkce.png -b transparent -C mmdc.css
+mmdc -i pkce.mmd -o pkce.svg -C mmdc.css
+``` 
