@@ -25,7 +25,7 @@ if (
   
 const server = restify.createServer({
   name: 'NativeNodeApp',
-  version: '1.0.1'
+  version: '1.0.2'
 });
 
 server.use(restify.plugins.acceptParser(server.acceptable));
@@ -135,7 +135,15 @@ async function tokenResponseHandler(tokenResponse) {
 }
 
 function uuid() {
-  s4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+  const buf = Buffer.alloc(2);
+  // use crypto library to generate random hex values
+  s4 = () => {
+    crypto.randomFillSync(buf, 0, 2);
+    return buf.toString('hex');
+  }
+
+  // alternative random hex string to crpto
+  h4 = () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
 
   return s4() + '_' + s4() + '_' + s4() + '_' + s4() + '_' + 
     s4() + '_' + s4() + '_' + s4() + '_' + s4() + '_' + 

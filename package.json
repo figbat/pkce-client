@@ -8,6 +8,8 @@
     "@types/request": "^2.48.1",
     "@types/restify": "^7.2.11",
     "commander": "^2.19.0",
+    "mermaid": "^8.1.0",
+    "mermaid.cli": "^0.5.1",
     "opn": "https://github.com/dogeared/opn.git",
     "request": "^2.88.0",
     "restify": "^7.2.2"

@@ -53,8 +53,25 @@ It follows these steps:
 8. Uses the returned access token to call the `userinfo` endpoint
 
 ## Prerequisites
-Install NodeJS
+Install NodeJS for your operating system.
 
+Add OKTA for user management (Identity Provider)
+1. Create yourself a developer account at https://developer.okta.com/signup 
+2. Go to the admin console and create an application. Browse to **Applications**. Click **Add Application**. Choose **Native**. Then Select **Next**:
+![IDP_1_App](IDP_1_App.png)
+3. Update the value for Login redirect URIs to: http://localhost:8080/redirect. Select Authorization Code and Refresh Token. Choose **Done**.
+![IDP_2_Grant](IDP_2_Grant.png)
+4. Note the Application ID generated.
+![IDP_3_ID](IDP_3_ID.png)
+5. Note the API Server URL under the API tab in OKTA.
+![IDP_4_API](IDP_4_API.png)
+
+## Install
+
+```
+npm install
+
+```
 ## Usage
 
 ```
@@ -66,13 +83,6 @@ Options:
   -s, --scopes <space separated list of scopes>  Space separated list of scopes (default: "")
   -r, --redirect_uri <redirect uri>              redirect uri (default: "")
   -h, --help                                     output usage information
-```
-
-## Install
-
-```
-npm install
-
 ```
 ## Run
  The npm pkce script has the following command: \
@@ -149,11 +159,12 @@ Here's an overview of the Authorization Code with PKCE flow:
 
 ![pkce](pkce.png)
 
-Note: This image was generated using [mermaid](https://mermaidjs.github.io/). The source is [here](pkce.mmd)
+Note: This image was generated using [mermaid](https://mermaidjs.github.io/). The source is [here](pkce.mmd).
+The package is installed locally since there are issues with the global install (npm install -g mermaid)
 
 You can edit and regenrate the image using this command:
 
 ```
-mmdc -i pkce.mmd -o pkce.png -b transparent -C mmdc.css
-mmdc -i pkce.mmd -o pkce.svg -C mmdc.css
+node_modules\.bin\mmdc -i pkce.mmd -o pkce.png -b transparent -C mmdc.css
+node_modules\.bin\mmdc -i pkce.mmd -o pkce.svg -C mmdc.css
 ``` 
