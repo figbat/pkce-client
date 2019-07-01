@@ -60,11 +60,11 @@ Add OKTA for user management (Identity Provider)
 2. Go to the admin console and create an application. Browse to **Applications**. Click **Add Application**. Choose **Native**. Then Select **Next**:
 ![idp1_app](idp1_app.png)
 3. Update the value for Login redirect URIs to: http://localhost:8080/redirect. Select Authorization Code and Refresh Token. Choose **Done**.
-![IDP_2_Grant](IDP_2_Grant.png)
+![idp2_grant](idp2_grant.png)
 4. Note the Application ID generated.
-![IDP_3_ID](IDP_3_ID.png)
+![idp3_id](idp3_id.png)
 5. Note the API Server URL under the API tab in OKTA.
-![IDP_4_API](IDP_4_API.png)
+![idp4_api](idp4_api.png)
 
 ## Install
 
