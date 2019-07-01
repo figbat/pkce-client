@@ -58,7 +58,7 @@ Install NodeJS for your operating system.
 Add OKTA for user management (Identity Provider)
 1. Create yourself a developer account at https://developer.okta.com/signup 
 2. Go to the admin console and create an application. Browse to **Applications**. Click **Add Application**. Choose **Native**. Then Select **Next**:
-![IDP_1_App](IDP_1_App.png)
+![idp1_app](idp1_app.png)
 3. Update the value for Login redirect URIs to: http://localhost:8080/redirect. Select Authorization Code and Refresh Token. Choose **Done**.
 ![IDP_2_Grant](IDP_2_Grant.png)
 4. Note the Application ID generated.
