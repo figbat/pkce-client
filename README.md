@@ -54,6 +54,9 @@ It follows these steps:
 
 ## Prerequisites
 Install NodeJS for your operating system.
+[node](https://nodejs.org/en/)
+Install Python for your operating system.
+[python] (https://www.python.org/downloads/)
 
 Add OKTA for user management (Identity Provider)
 1. Create yourself a developer account at https://developer.okta.com/signup 
