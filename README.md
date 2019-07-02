@@ -53,10 +53,8 @@ It follows these steps:
 8. Uses the returned access token to call the `userinfo` endpoint
 
 ## Prerequisites
-Install NodeJS for your operating system.
-[node](https://nodejs.org/en/)
-Install Python for your operating system.
-[python] (https://www.python.org/downloads/)
+Install [NodeJS](https://nodejs.org/en/) for your operating system.
+Install [Python](https://www.python.org/downloads/) for your operating system.
 
 Add OKTA for user management (Identity Provider)
 1. Create yourself a developer account at https://developer.okta.com/signup 
