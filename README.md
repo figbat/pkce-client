@@ -80,7 +80,7 @@ Usage: pkce-client [options]
 
 Options:
   -c, --client_id <okta client id>               OIDC Client ID (default: "")
-  -o, --okta_org <okta org url>                  ex: https://dev-532307.okta.com (default: "")
+  -i, --idp_org <idp org url>                   ex: https://dev-532307.okta.com (default: "")
   -s, --scopes <space separated list of scopes>  Space separated list of scopes (default: "")
   -r, --redirect_uri <redirect uri>              redirect uri (default: "")
   -h, --help                                     output usage information
@@ -89,7 +89,7 @@ Options:
  The npm pkce script has the following command: \
  node pkce-client \
   --client_id 0oar16ap61JZJIbYp356 \
-  --okta_org https://dev-532307.okta.com \
+  --idp_org https://dev-532307.okta.com \
   --scopes "openid profile email offline_access" \
   --redirect_uri http://localhost:8080/redirect 
 ```

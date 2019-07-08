@@ -9,14 +9,14 @@ var opn = require('opn');           // Open a browser from NodeJS
 // Setup
 
 program
-  .option('-c, --client_id <okta client id>', 'OIDC Client ID', '')
-  .option('-o, --okta_org <okta org url>', 'ex: https://dev-532307.okta.com', '')
+  .option('-c, --client_id <idp client id>', 'OIDC Client ID', '')
+  .option('-o, --idp_org <idp org url>', 'ex: https://dev-532307.okta.com', '')
   .option('-s, --scopes <space separated list of scopes>', 'Space separated list of scopes', 'openid profile email offline_access')
   .option('-r, --redirect_uri <redirect uri>', 'redirect uri', 'http://localhost:8080/redirect')
   .parse(process.argv);
   
 if (
-  !program.client_id || !program.okta_org || 
+  !program.client_id || !program.idp_org || 
   !program.scopes || !program.redirect_uri
 ) {
   program.help();
@@ -100,7 +100,7 @@ async function idpRedirectHandler(req, res, next) {
   
   // Step 3: call token endpoint where Identity Provider (Okta) will exchange code for tokens
   var opt = {
-    url: program.okta_org + '/oauth2/default/v1/token', 
+    url: program.idp_org + '/oauth2/default/v1/token', 
     form: form
   }
   request.post(opt, (err, httpResponse, body) => {
@@ -125,7 +125,7 @@ async function tokenResponseHandler(tokenResponse) {
   console.log('\nCalling /userinfo endpoint with access token\n');
   
   request.get(
-    program.okta_org + '/oauth2/default/v1/userinfo', 
+    program.idp_org + '/oauth2/default/v1/userinfo', 
     { auth: { bearer: tokenResponse.access_token } }, 
      (err, httpResponse, body) => {
       console.log(JSON.parse(body));
@@ -155,7 +155,7 @@ function base64urlencode(str){
 }
 
 function buildAuthorizeUrl(codeChallenge) {
-	var authorizeUrl = program.okta_org + '/oauth2/default/v1/authorize?' +
+	var authorizeUrl = program.idp_org + '/oauth2/default/v1/authorize?' +
     'client_id=' + program.client_id + '&' +
     'response_type=code&' +
     'scope=' + program.scopes + '&' +
