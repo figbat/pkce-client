@@ -103,14 +103,49 @@ async function idpRedirectHandler(req, res, next) {
     url: program.idp_org + '/oauth2/default/v1/token', 
     form: form
   }
-  request.post(opt, (err, httpResponse, body) => {
+  request.post(opt, async (err, httpResponse, body) => {
     var tokenResponse = JSON.parse(body);
-    tokenResponseHandler(tokenResponse);
+    await tokenResponseHandler(tokenResponse);
+    setTimeout(refreshToken, (tokenResponse.expires_in * 1000),
+       tokenResponse);
+ 
     return next();
   })
   .on('error', (err) => {
     console.log(err);
-  });
+  })
+}
+
+function refreshToken(tokenResponse) {
+  console.log();
+  console.log('Refresh expiration ' + tokenResponse.expires_in + ' seconds');
+
+  var form = {
+    grant_type: 'refresh_token',
+    refresh_token: tokenResponse.refresh_token,
+    client_id: program.client_id
+  };
+
+  console.log(
+    'Form post to be sent to the /token endpoint:'
+  );
+  console.log(form);
+  console.log();
+
+  // Step Z: call token endpoint where Identity Provider (Okta) will exchange code for tokens
+  var opt = {
+    url: program.idp_org + '/oauth2/default/v1/token', 
+    form: form
+  }
+  request.post(opt, async (err, httpResponse, body) => {
+    await tokenResponseHandler(JSON.parse(body));
+    console.log('press any key to exit...');
+    await keypress();  
+    process.exit(0);
+  })
+  .on('error', (err) => {
+    console.log(err);
+  })
 }
 
 // Step 4: use the access_token to hit the /userinfo endpoint
@@ -124,12 +159,11 @@ async function tokenResponseHandler(tokenResponse) {
 
   console.log('\nCalling /userinfo endpoint with access token\n');
   
-  request.get(
+   return request.get(
     program.idp_org + '/oauth2/default/v1/userinfo', 
     { auth: { bearer: tokenResponse.access_token } }, 
-     (err, httpResponse, body) => {
-      console.log(JSON.parse(body));
-      process.exit(0);
+      (err, httpResponse, body) => {
+       console.log(JSON.parse(body));
     }
   );
 }
