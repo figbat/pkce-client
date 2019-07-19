@@ -1,18 +1,24 @@
 sequenceDiagram
     participant RO as Resource Owner
+    participant UA as User Agent
     participant CA as Client App
     participant AS as Authorization Server
     RO->>CA: 1. Access App
-    note right of CA: create random (v)<br/>$ = sha256(v) 
-    CA->>RO: 2. Redirect with $
-    RO->>AS: 3. Redirect to Login with $
+    note right of CA: create verifier (v)<br/>$ = sha256(v) 
+    CA->>RO: 2. Prompt with $ hash
+    RO->>AS: 3. Call Auth Endpoint with $
     note right of AS: store $
-    AS->>RO: 4. Returns Login Form
-    RO->>AS: 5. Submits Credentials
+    AS->>UA: 4. Returns Login Form
+    UA->>AS: 5. Submits Credentials
     note right of AS: authenticate user
-    AS->>RO: 6. Redirect with code (α)
-    RO->>CA: 7. Redirect to App with code (α)
-    CA->>AS: 8. Request Token
+    AS->>UA: 6. Redirect with code (α)
+    CA->>RO: 7. Prompt to continue
+    RO->>CA: 8. Continue the App with code (α)
+    CA->>AS: 9. Request Token
     note over CA,AS: request includes:<br/>Client ID, (v), (α)
     note right of AS: validate:<br/>- Client ID<br/>- sha256(v) = $<br/>- (α)
-    AS->>CA: 9. Return Token
+    AS->>CA: 10. Return Token
+    CA->>CA: 11. Countdown Token Expiration
+    CA->>AS: 12. Request Token Refresh
+    note over CA,AS: request includes:<br/>Client ID, Refresh Token
+    AS->>CA: 13. Return Token
