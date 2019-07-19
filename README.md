@@ -93,7 +93,7 @@ Options:
   --scopes "openid profile email offline_access" \
   --redirect_uri http://localhost:8080/redirect 
 ```
-npm run pkce 
+npm run pkce-okta 
 
 ```
 
