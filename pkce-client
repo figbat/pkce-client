@@ -100,7 +100,7 @@ async function idpRedirectHandler(req, res, next) {
   
   // Step 3: call token endpoint where Identity Provider (Okta) will exchange code for tokens
   var opt = {
-    url: program.idp_org + '/oauth2/default/v1/token', 
+    url: program.idp_org + '/token', 
     form: form
   }
   request.post(opt, async (err, httpResponse, body) => {
@@ -152,7 +152,7 @@ function refreshToken(tokenResponse) {
 
   // Step Z: call token endpoint where Identity Provider (Okta) will exchange code for tokens
   var opt = {
-    url: program.idp_org + '/oauth2/default/v1/token', 
+    url: program.idp_org + '/token', 
     form: form
   }
   request.post(opt, async (err, httpResponse, body) => {
@@ -180,7 +180,7 @@ async function tokenResponseHandler(tokenResponse) {
   console.log('\nCalling /userinfo endpoint with access token\n');
   
    return request.get(
-    program.idp_org + '/oauth2/default/v1/userinfo', 
+    program.idp_org + '/userinfo', 
     { auth: { bearer: tokenResponse.access_token } }, 
       (err, httpResponse, body) => {
        console.log(JSON.parse(body));
@@ -209,7 +209,7 @@ function base64urlencode(str){
 }
 
 function buildAuthorizeUrl(codeChallenge) {
-	var authorizeUrl = program.idp_org + '/oauth2/default/v1/authorize?' +
+	var authorizeUrl = program.idp_org + '/authorize?' +
     'client_id=' + program.client_id + '&' +
     'response_type=code&' +
     'scope=' + program.scopes + '&' +
