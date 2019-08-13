@@ -19,7 +19,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "pkce-okta": "node pkce-client --client_id 0oar16ap61JZJIbYp356 --idp_org https://dev-532307.okta.com/oauth2/default/v1 --scopes \"openid profile email offline_access\" --redirect_uri http://localhost:8080/redirect",
     "pkce-sfdc": "node pkce-client --client_id 3MVG99OxTyEMCQ3jLn42JgU9JP.rNOUQ.FE2zekMTakLAy3X46NnD808OcggcFSpgNzTJzjJ6ZZ8thFvnJu5Z --idp_org https://logon.gehealthcare.com/services/oauth2 --scopes \"openid api refresh_token\" --redirect_uri http://localhost:8080/redirect",
-    "pkce-sfdc-dev": "node pkce-client --client_id 3MVG9CxwbdV68qJKgj5WWgveAZvmFo4EREv357Ke3nRnF2MUAmWVTV66brK_Y1toHVahP1NZOfhNEARlmlkHZ --idp_org https://dev-gehc.cs97.force.com/geidp/services/oauth2 --scopes \"openid api refresh_token\" --redirect_uri http://localhost:8080/redirect"
+    "pkce-sfdc-dev": "node pkce-client --client_id 3MVG9CxwbdV68qJKgj5WWgveAZvneifOHmHzoA_CbLrVRwfDDgl.7QOZM1Lr5EAYWiFO.o.rfVk.3KcVm97TX --idp_org https://dev-gehc.cs97.force.com/geidp/services/oauth2 --scopes \"openid api refresh_token offline_access\" --redirect_uri http://localhost:8080/redirect"
 
   },
   "author": "Brian Rafalowski",

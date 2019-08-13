@@ -120,8 +120,11 @@ function startCountdown(tokenResponse){
     tokenResponse.expires_in + ' seconds');
   
   // Log countown every 5 seconds
-  var counter = tokenResponse.expires_in / 5;
-
+  var counter = 300 / 5;
+  if (tokenResponse.expires_in){
+    counter = tokenResponse.expires_in / 5;
+  }
+ 
   var interval = setInterval(() => {
     console.log('expiration in ' + (counter * 5) + ' seconds...');
     counter--;
