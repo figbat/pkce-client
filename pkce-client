@@ -11,6 +11,7 @@ var opn = require('opn');           // Open a browser from NodeJS
 program
   .option('-c, --client_id <idp client id>', 'OIDC Client ID', '')
   .option('-i, --idp_org <idp org url>', 'ex: https://dev-532307.okta.com', '')
+  .option('-u, --user_org <userinfo org url>', 'ex: https://dev-532307.okta.com', '')
   .option('-s, --scopes <space separated list of scopes>', 'Space separated list of scopes', 'openid profile email offline_access')
   .option('-r, --redirect_uri <redirect uri>', 'redirect uri', 'http://localhost:8080/redirect')
   .parse(process.argv);
@@ -32,6 +33,7 @@ server.use(restify.plugins.acceptParser(server.acceptable));
 server.use(restify.plugins.queryParser());
 server.use(restify.plugins.bodyParser());
 server.listen(8080);
+console.log('%s listening at %s', server.name, server.url);
 
 // listen on https://localhost:8080/redirect for redirect_uri callback from identity providor
 server.get('/redirect', idpRedirectHandler);
@@ -182,11 +184,14 @@ async function tokenResponseHandler(tokenResponse) {
 
   console.log('\nCalling /userinfo endpoint with access token\n');
   
+  var userinfo = (program.user_org) ? program.user_org : program.idp_org;
    return request.get(
-    program.idp_org + '/userinfo', 
+    userinfo + '/userinfo', 
     { auth: { bearer: tokenResponse.access_token } }, 
       (err, httpResponse, body) => {
-       console.log(JSON.parse(body));
+        if (body){
+          console.log(JSON.parse(body));
+        }
     }
   );
 }
