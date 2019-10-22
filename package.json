@@ -16,17 +16,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "pkce-okta": "node pkce-client --client_id 0oar16ap61JZJIbYp356 --idp_org https://dev-532307.okta.com/oauth2/default/v1 --scopes \"openid profile email offline_access\" --redirect_uri http://localhost:8080/redirect",
-    "pkce-adfs": "node pkce-client --client_id bd4a073a-9ba0-44e0-afa6-51387f9b1da0 --idp_org https://40.114.125.54/adfs/oauth2  --scopes \"openid profile email\" --redirect_uri http://localhost:8080/redirect",
     "pkce-adfs-v1-com": "node pkce-client --client_id 1a7b542f-2c84-4dab-9b21-547975cd948f --idp_org https://login.microsoftonline.com/common/oauth2 --user_org https://login.microsoftonline.com/common/openid --scopes \"openid profile email offline_access api://1a7b542f-2c84-4dab-9b21-547975cd948f/encompass_api\" --redirect_uri http://localhost:8080/redirect",
-    "pkce-adfs-v2-com": "node pkce-client --client_id 1a7b542f-2c84-4dab-9b21-547975cd948f --idp_org https://login.microsoftonline.com/common/oauth2/v2.0 --user_org https://graph.microsoft.com/oidc --scopes \"openid profile email offline_access\" --redirect_uri http://localhost:8080/redirect",
-    "pkce-sfdc": "node pkce-client --client_id 3MVG99OxTyEMCQ3jLn42JgU9JP.rNOUQ.FE2zekMTakLAy3X46NnD808OcggcFSpgNzTJzjJ6ZZ8thFvnJu5Z --idp_org https://logon.gehealthcare.com/services/oauth2 --scopes \"openid api refresh_token\" --redirect_uri http://localhost:8080/redirect",
-    "pkce-sfdc-dev": "node pkce-client --client_id 3MVG9CxwbdV68qJKgj5WWgveAZvneifOHmHzoA_CbLrVRwfDDgl.7QOZM1Lr5EAYWiFO.o.rfVk.3KcVm97TX --idp_org https://dev-gehc.cs97.force.com/geidp/services/oauth2 --scopes \"openid api refresh_token offline_access\" --redirect_uri http://localhost:8080/redirect",
-    "pkce-sfdc-uat": "node pkce-client --client_id 3MVG9CxwbdV68qJKgj5WWgveAZvneifOHmHzoA_CbLrVRwfDDgl.7QOZM1Lr5EAYWiFO.o.rfVk.3KcVm97TX --idp_org https://uat1-gehc.cs94.force.com/geidp/services/oauth2 --scopes \"openid api refresh_token offline_access\" --redirect_uri http://localhost:8080/redirect",
-    "pkce-sfdc-uat2": "node pkce-client --client_id 3MVG9lJB4lV8F4SjfGf0sZm0U_KNQ6ZCSWX5E69iICUhLexXvgGUGufHPfLHSjxuA_1pWxGBtkag__0u0OH8R --idp_org https://uat2-gehc.cs35.force.com/geidp/services/oauth2 --scopes \"openid api refresh_token offline_access\" --redirect_uri https://uat.gehealthcare.com/api/loginCallback",
-    "pkce-sfdc-prd": "node pkce-client --client_id 3MVG9CxwbdV68qJKgj5WWgveAZvneifOHmHzoA_CbLrVRwfDDgl.7QOZM1Lr5EAYWiFO.o.rfVk.3KcVm97TX --idp_org https://gehealthcare-amer.my.salesforce.com/services/oauth2 --scopes \"openid api refresh_token offline_access\" --redirect_uri http://localhost:8080/redirect"
-
+    "pkce-adfs-v2-com": "node pkce-client --client_id 1a7b542f-2c84-4dab-9b21-547975cd948f --idp_org https://login.microsoftonline.com/common/oauth2/v2.0 --user_org https://graph.microsoft.com/oidc --scopes \"openid profile email offline_access\" --redirect_uri http://localhost:8080/redirect"
   },
   "author": "Brian Rafalowski",
   "license": "ISC"
